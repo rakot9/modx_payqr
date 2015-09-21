@@ -1,0 +1,1 @@
+<div id="payqr-panel-home-div"></div>
