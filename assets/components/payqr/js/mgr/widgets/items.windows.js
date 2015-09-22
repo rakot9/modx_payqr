@@ -97,12 +97,11 @@ Ext.extend(payqr.window.UpdateItem, MODx.Window, {
 			id: config.id + '-htmlvalue',
 			anchor: '99%'
                 }, {
-			xtype: 'textarea',
+			xtype: 'textfield',
 			fieldLabel: _('payqr_item_description'),
 			name: 'description',
 			id: config.id + '-description',
 			anchor: '99%',
-			height: 150,
 		}, {
 			xtype: 'xcheckbox',
 			boxLabel: _('payqr_item_active'),

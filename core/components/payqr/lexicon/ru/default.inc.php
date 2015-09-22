@@ -10,6 +10,7 @@ $_lang['payqr_item_id'] = 'Id';
 $_lang['payqr_item_name'] = 'Название';
 $_lang['payqr_item_description'] = 'Описание';
 $_lang['payqr_item_active'] = 'Активно';
+$_lang['payqr_item_htmlvalue'] = 'Значение параметра';
 
 $_lang['payqr_item_create'] = 'Создать параметр';
 $_lang['payqr_item_update'] = 'Изменить параметр';

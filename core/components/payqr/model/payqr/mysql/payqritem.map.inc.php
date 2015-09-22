@@ -47,9 +47,10 @@ $xpdo_meta_map['payqrItem']= array (
     ),
     'description' => 
     array (
-      'dbtype' => 'text',
-      'phptype' => 'text',
-      'null' => true,
+      'dbtype' => 'varchar',
+      'precision' => '100',
+      'phptype' => 'string',
+      'null' => false,
       'default' => '',
     ),
     'active' => 
