@@ -80,8 +80,6 @@ if ($object->xpdo) {
                     unset($schema);
                 }
 
-                $fp = fopen("payqr_work.log", "a");
-                
                 //обходим object  в xml
                 foreach($objects as $payqr_params)
                 {
@@ -91,7 +89,6 @@ if ($object->xpdo) {
                     {
                         $insert_data[(string)$field_row['name']] = (string)$field_row['value'];
                     }
-                    fwrite($fp, print_r($insert_data, true));
                     
                     if(empty($insert_data))
                     {
@@ -103,8 +100,7 @@ if ($object->xpdo) {
                     $payqr_settings->fromArray($insert_data);
                     
                     $saved = $payqr_settings->save();
-                }                
-                fclose($fp);
+                }
             }
             break;
 
