@@ -21,21 +21,22 @@ payqr.window.CreateItem = function (config) {
 Ext.extend(payqr.window.CreateItem, MODx.Window, {
 
 	getFields: function (config) {
-		return [{
+		return [/*{
 			xtype: 'textfield',
 			fieldLabel: _('payqr_item_name'),
 			name: 'name',
 			id: config.id + '-name',
 			anchor: '99%',
 			allowBlank: false,
-		}, {
-			xtype: 'textarea',
+		},*/
+                {
+                        xtype: 'textarea',
 			fieldLabel: _('payqr_item_description'),
 			name: 'description',
 			id: config.id + '-description',
 			height: 150,
 			anchor: '99%'
-		}, {
+                }, {
 			xtype: 'xcheckbox',
 			boxLabel: _('payqr_item_active'),
 			name: 'active',
@@ -75,14 +76,14 @@ Ext.extend(payqr.window.UpdateItem, MODx.Window, {
 			xtype: 'hidden',
 			name: 'id',
 			id: config.id + '-id',
-		}, {
+		},/* {
 			xtype: 'textfield',
 			fieldLabel: _('payqr_item_name'),
 			name: 'name',
 			id: config.id + '-name',
 			anchor: '99%',
 			allowBlank: false,
-		}, {
+		},*/ {
 			xtype: 'textarea',
 			fieldLabel: _('payqr_item_description'),
 			name: 'description',

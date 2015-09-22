@@ -7,7 +7,7 @@ class payqrItemGetListProcessor extends modObjectGetListProcessor {
 	public $objectType = 'payqrItem';
 	public $classKey = 'payqrItem';
 	public $defaultSortField = 'id';
-	public $defaultSortDirection = 'DESC';
+	public $defaultSortDirection = 'ASC';
 	//public $permission = 'list';
 
 

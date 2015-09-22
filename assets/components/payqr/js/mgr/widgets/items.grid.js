@@ -35,7 +35,7 @@ payqr.grid.Items = function (config) {
 		autoHeight: true,
 	});
 	payqr.grid.Items.superclass.constructor.call(this, config);
-
+        
 	// Clear selection on grid refresh
 	this.store.on('load', function () {
 		if (this._getSelectedIds().length) {
@@ -182,7 +182,7 @@ Ext.extend(payqr.grid.Items, MODx.grid.Grid, {
 	},
 
 	getFields: function (config) {
-		return ['id', 'name', 'description', 'active', 'actions'];
+		return ['id', /*'name',*/, 'description', 'active', 'actions'];
 	},
 
 	getColumns: function (config) {
@@ -190,13 +190,13 @@ Ext.extend(payqr.grid.Items, MODx.grid.Grid, {
 			header: _('payqr_item_id'),
 			dataIndex: 'id',
 			sortable: true,
-			width: 70
-		}, {
+			width: 0
+		},/* {
 			header: _('payqr_item_name'),
 			dataIndex: 'name',
 			sortable: true,
 			width: 200,
-		}, {
+		},*/ {
 			header: _('payqr_item_description'),
 			dataIndex: 'description',
 			sortable: false,
