@@ -37,6 +37,12 @@ Ext.extend(payqr.window.CreateItem, MODx.Window, {
 			height: 150,
 			anchor: '99%'
                 }, {
+                        xtype: 'textfield',
+			fieldLabel: _('payqr_item_htmlvalue'),
+			name: 'htmlvalue',
+			id: config.id + '-htmlvalue',
+			anchor: '99%'
+                }, {
 			xtype: 'xcheckbox',
 			boxLabel: _('payqr_item_active'),
 			name: 'active',
@@ -83,7 +89,14 @@ Ext.extend(payqr.window.UpdateItem, MODx.Window, {
 			id: config.id + '-name',
 			anchor: '99%',
 			allowBlank: false,
-		},*/ {
+		},*/
+                {
+                        xtype: 'textfield',
+			fieldLabel: _('payqr_item_htmlvalue'),
+			name: 'htmlvalue',
+			id: config.id + '-htmlvalue',
+			anchor: '99%'
+                }, {
 			xtype: 'textarea',
 			fieldLabel: _('payqr_item_description'),
 			name: 'description',
