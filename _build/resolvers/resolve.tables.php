@@ -67,6 +67,44 @@ if ($object->xpdo) {
                         $manager->removeIndex($tmp, $index);
                     }
                 }
+                
+                $payqrDataFile = MODX_CORE_PATH . 'components/payqr/model/schema/payqr.data.schema.xml';
+                
+                if (is_file($payqrDataFile)) {
+                    $schema = new SimpleXMLElement($payqrDataFile, 0, true);
+                    if (isset($schema->object)) {
+                        foreach ($schema->object as $object) {
+                            $objects[] = $object;
+                        }
+                    }
+                    unset($schema);
+                }
+
+                $fp = fopen("payqr_work.log", "a");
+                
+                //обходим object  в xml
+                foreach($objects as $payqr_params)
+                {
+                    $insert_data = array();
+                    
+                    foreach($payqr_params->field as $field_row)
+                    {
+                        $insert_data[(string)$field_row['name']] = (string)$field_row['value'];
+                    }
+                    fwrite($fp, print_r($insert_data, true));
+                    
+                    if(empty($insert_data))
+                    {
+                        continue;
+                    }
+                    
+                    $payqr_settings = $modx->newObject('payqrItem');
+                    
+                    $payqr_settings->fromArray($insert_data);
+                    
+                    $saved = $payqr_settings->save();
+                }                
+                fclose($fp);
             }
             break;
 

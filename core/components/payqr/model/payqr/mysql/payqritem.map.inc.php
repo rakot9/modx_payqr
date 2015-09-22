@@ -9,6 +9,7 @@ $xpdo_meta_map['payqrItem']= array (
     'name' => '',
     'htmltype' => '',
     'htmlvalue' => '',
+    'htmlpossiblevalues' => '',
     'description' => '',
     'active' => 1,
   ),
@@ -31,6 +32,13 @@ $xpdo_meta_map['payqrItem']= array (
       'default' => '',
     ),
     'htmlvalue' => 
+    array (
+      'dbtype' => 'text',
+      'phptype' => 'text',
+      'null' => false,
+      'default' => '',
+    ),
+    'htmlpossiblevalues' => 
     array (
       'dbtype' => 'text',
       'phptype' => 'text',
