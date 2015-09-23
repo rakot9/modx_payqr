@@ -19,17 +19,12 @@ payqr.window.CreateItem = function (config) {
 	payqr.window.CreateItem.superclass.constructor.call(this, config);
 };
 Ext.extend(payqr.window.CreateItem, MODx.Window, {
-
 	getFields: function (config) {
-		return [/*{
-			xtype: 'textfield',
-			fieldLabel: _('payqr_item_name'),
+		return [{
+                        xtype: 'hidden',
 			name: 'name',
-			id: config.id + '-name',
-			anchor: '99%',
-			allowBlank: false,
-		},*/
-                {
+			id: config.id + '-name'
+                }, {
                         xtype: 'textarea',
 			fieldLabel: _('payqr_item_description'),
 			name: 'description',
@@ -54,9 +49,11 @@ Ext.extend(payqr.window.CreateItem, MODx.Window, {
 });
 Ext.reg('payqr-item-window-create', payqr.window.CreateItem);
 
-
 payqr.window.UpdateItem = function (config) {
 	config = config || {};
+        
+        payqr.connectors_data = config.record.object;
+        
 	if (!config.id) {
 		config.id = 'payqr-item-window-update';
 	}
@@ -75,27 +72,24 @@ payqr.window.UpdateItem = function (config) {
 	});
 	payqr.window.UpdateItem.superclass.constructor.call(this, config);
 };
-Ext.extend(payqr.window.UpdateItem, MODx.Window, {
 
+Ext.extend(payqr.window.UpdateItem, MODx.Window, {
+        
 	getFields: function (config) {
 		return [{
 			xtype: 'hidden',
 			name: 'id',
 			id: config.id + '-id',
-		},/* {
-			xtype: 'textfield',
-			fieldLabel: _('payqr_item_name'),
+		}, {
+                        xtype: 'hidden',
 			name: 'name',
-			id: config.id + '-name',
-			anchor: '99%',
-			allowBlank: false,
-		},*/
-                {
-                        xtype: 'textfield',
-			fieldLabel: _('payqr_item_htmlvalue'),
-			name: 'htmlvalue',
-			id: config.id + '-htmlvalue',
-			anchor: '99%'
+			id: config.id + '-name'
+                }, {
+                        xtype: config.record.object.htmltype == "select"? 'doodle-combo-units' : 'textfield' ,
+                        fieldLabel: _('payqr_item_htmlvalue') ,
+                        name: 'htmlvalue' ,
+                        hiddenName: 'htmlvalue' ,
+                        anchor: '100%'
                 }, {
 			xtype: 'textfield',
 			fieldLabel: _('payqr_item_description'),
@@ -109,6 +103,35 @@ Ext.extend(payqr.window.UpdateItem, MODx.Window, {
 			id: config.id + '-active',
 		}];
 	}
-
 });
 Ext.reg('payqr-item-window-update', payqr.window.UpdateItem);
+
+payqr.combo.Units = function(config) {
+    
+    config = config || {};
+    
+    var possible_values = Ext.decode(payqr.connectors_data.htmlpossiblevalues);
+    var selectArrayFields = new Array();
+    
+    for(var iIter in possible_values)
+    {
+        var selectRow = new Array();
+        selectRow.push(iIter);
+        selectRow.push(possible_values[iIter]);
+        selectArrayFields.push(selectRow);
+    }
+    
+    Ext.applyIf(config,{
+        store: new Ext.data.ArrayStore({
+            id: 0
+            ,fields: ['unit','display']
+            ,data: selectArrayFields
+        })
+        ,mode: 'local'
+        ,displayField: 'display'
+        ,valueField: 'unit'
+    });
+    payqr.combo.Units.superclass.constructor.call(this, config);
+};
+Ext.extend(payqr.combo.Units, MODx.combo.ComboBox);
+Ext.reg('doodle-combo-units',payqr.combo.Units);

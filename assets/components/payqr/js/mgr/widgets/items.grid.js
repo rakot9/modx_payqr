@@ -26,8 +26,8 @@ payqr.grid.Items = function (config) {
 			scrollOffset: 0,
 			getRowClass: function (rec, ri, p) {
 				return !rec.data.active
-					? 'payqr-grid-row-disabled'
-					: '';
+					? ''
+					: '';//payqr-grid-row-disabled
 			}
 		},
 		paging: true,
@@ -182,7 +182,7 @@ Ext.extend(payqr.grid.Items, MODx.grid.Grid, {
 	},
 
 	getFields: function (config) {
-		return ['id', /*'name',*/, 'description', 'active', 'actions'];
+		return ['id', /*'name',*/, 'description', 'htmlvalue', 'actions'];
 	},
 
 	getColumns: function (config) {
@@ -202,10 +202,9 @@ Ext.extend(payqr.grid.Items, MODx.grid.Grid, {
 			sortable: false,
 			width: 250,
 		}, {
-			header: _('payqr_item_active'),
-			dataIndex: 'active',
-			renderer: payqr.utils.renderBoolean,
-			sortable: true,
+			header: _('payqr_item_htmlvalue'),
+			dataIndex: 'htmlvalue',
+			sortable: false,
 			width: 100,
 		}, {
 			header: _('payqr_grid_actions'),
