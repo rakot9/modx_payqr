@@ -7,6 +7,15 @@ if ($object->xpdo) {
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
         case xPDOTransport::ACTION_UPGRADE:
+            $packages = array(
+				'pdoTools' => array(
+					'version_major' => 1,
+					'version_minor:>=' =>  8,
+				)
+			);
+            
+            
+            
             $modelPath = $modx->getOption('payqr_core_path', null, $modx->getOption('core_path') . 'components/payqr/') . 'model/';
             $modx->addPackage('payqr', $modelPath);
 

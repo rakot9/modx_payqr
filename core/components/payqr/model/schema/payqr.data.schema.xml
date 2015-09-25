@@ -360,7 +360,7 @@
         <field name="name" value="require_delivery"/>
         <field name="htmltype" value="select"/>
         <field name="htmlvalue" value="default"/>
-        <field name="htmlpossiblevalues" value="{default:'По умолчанию', deny:'Не запрашивать', required:'Запрашивать'}"/>
+        <field name="htmlpossiblevalues" value="{default:'По умолчанию', deny:'Не запрашивать', required:'Запрашивать', nonrequired:'Запросить после оплаты'}"/>
         <field name="description" value="Запрашивать адрес доставки"/>
         <field name="active" value="1"/>
     </object>
@@ -381,11 +381,19 @@
         <field name="active" value="1"/>
     </object>
     <object class="payqr_item_rows" table="payqr_items">
-        <field name="name" value="require_promo"/>
+        <field name="name" value="require_promo_code"/>
         <field name="htmltype" value="select"/>
         <field name="htmlvalue" value="default"/>
-        <field name="htmlpossiblevalues" value="{default:'По умолчанию', deny:'Не запрашивать', required:'Запрашивать'}"/>
-        <field name="description" value="Предлагать ввести промо-идентификатор"/>
+        <field name="htmlpossiblevalues" value="{default:'По умолчанию', deny:'Не запрашивать', nonrequired:'Запросить после оплаты'}"/>
+        <field name="description" value="Предлагать ввести промо-код"/>
+        <field name="active" value="1"/>
+    </object>
+    <object class="payqr_item_rows" table="payqr_items">
+        <field name="name" value="require_promo_card"/>
+        <field name="htmltype" value="select"/>
+        <field name="htmlvalue" value="default"/>
+        <field name="htmlpossiblevalues" value="{default:'По умолчанию', deny:'Не запрашивать', nonrequired:'Запросить после оплаты'}"/>
+        <field name="description" value="Предлагать ввести карту лояльности"/>
         <field name="active" value="1"/>
     </object>
     <object class="payqr_item_rows" table="payqr_items">

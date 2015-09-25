@@ -4,6 +4,13 @@
 if (!$payqr = $modx->getService('payqr', 'payqr', $modx->getOption('payqr_core_path', null, $modx->getOption('core_path') . 'components/payqr/') . 'model/payqr/', $scriptProperties)) {
 	return 'Could not load payqr class!';
 }
+/** @var pdoTools $pdoTools */
+$pdoTools = $modx->getService('pdoTools');
+
+if (!($payqr instanceof payqr) || !($pdoTools instanceof pdoTools)) return '';
+
+return $payqr->getButton();
+    
 
 // Do your snippet code here. This demo grabs 5 items from our custom table.
 $tpl = $modx->getOption('tpl', $scriptProperties, 'Item');
