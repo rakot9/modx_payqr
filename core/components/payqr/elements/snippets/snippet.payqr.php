@@ -9,7 +9,9 @@ $pdoTools = $modx->getService('pdoTools');
 
 if (!($payqr instanceof payqr) || !($pdoTools instanceof pdoTools)) return '';
 
-return $payqr->getButton();
+$payqr->initPopupJS();
+
+return $payqr->getButton($page);
     
 
 // Do your snippet code here. This demo grabs 5 items from our custom table.

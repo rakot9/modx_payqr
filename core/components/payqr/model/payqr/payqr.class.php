@@ -63,16 +63,19 @@ class payqr {
 		return $merchantId;
 	}
 
+        public function initPopupJS()
+        {
+            $this->modx->regClientStartupScript('https://payqr.ru/popup.js?merchId=' . $this->merchantId );
+        }
 
 	public function getButton($page = "product")
 	{
-		$this->modx->regClientStartupScript('https://payqr.ru/popup.js?merchId=' . $this->merchantId );
-
 		return '<button
 			class="payqr-button"
 			data-scenario="buy"
 			data-cart=\'[{"article":"123123","name":"Хороший товар","quantity":"1","amount":"500.00","imageurl":"http://modastuff.ru/item1.jpg"},{"article":"123123","name":"Очень хороший товар","quantity":"2","amount":"1000.00","imageurl":"http://modastuff.ru/item2.jpg"}]\'
 			data-amount="2500.00"
+                        data-userdata="'.$page.'"
 			style="width: 163px; height: 36px;" > Купить быстрее </button>';
 	}
 }
