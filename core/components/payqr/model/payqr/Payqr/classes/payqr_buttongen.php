@@ -51,11 +51,15 @@ class payqr_buttongen {
      */
     public function genereateButton(payqr_button $payqrButton)
     {
-        $button = "";
-        
         $this->config = $payqrButton->getPayqrItems();
         
         $this->payqrButton = $payqrButton;
+        
+        if(!isset($this->config['merchant_id'], $this->config['secret_key_in'], $this->config['secret_key_out']) ||
+            (empty($this->config['merchant_id']) && empty($this->config['secret_key_in']) && empty($this->config['secret_key_out']) ))
+        {
+            return "";
+        }
         
         if(!in_array($this->page, $this->allowed_pages))
         {
@@ -67,9 +71,7 @@ class payqr_buttongen {
             return "";
         }
         
-        $button = $this->payqrButton->getHtmlButton();
-        
-        return $button;
+        return $this->payqrButton->getHtmlButton();
     }
     
     private function setPageButtonParam()

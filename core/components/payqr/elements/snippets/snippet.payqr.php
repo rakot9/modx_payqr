@@ -16,17 +16,6 @@ if (!($payqr instanceof payqr) || !($pdoTools instanceof pdoTools)) return '';
 
 $payqr->initPopupJS();
 
-$payqrButton = new payqr_button($modx, 10);
-
-$config = $payqrButton->getPayqrItems();
-
-if(!isset($config['merchant_id'], $config['secret_key_in'], $config['secret_key_out']) ||
-    (empty($config['merchant_id']) && empty($config['secret_key_in']) && empty($config['secret_key_out']) )
-   )
-{
-    return "";
-}
-
 $payqrConfig = payqr_config::init($config['merchant_id'], $config['secret_key_in'], $config['secret_key_out']);
 
 $output = payqr_buttongen::getInstance()
