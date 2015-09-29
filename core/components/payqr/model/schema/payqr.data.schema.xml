@@ -85,7 +85,7 @@
         <field name="name" value="cart_button_font_trans"/>
         <field name="htmltype" value="select"/>
         <field name="htmlvalue" value="default"/>
-        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'text-small':'Мелко', 'text-medium':'Средне', 'text-large':'Крупно'}"/>
+        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'small':'Мелко', 'medium':'Средне', 'large':'Крупно'}"/>
         <field name="description" value="Размер шрифта кнопки на странице корзины товаров"/>
         <field name="active" value="1"/>
     </object>
@@ -93,7 +93,7 @@
         <field name="name" value="cart_button_font_width"/>
         <field name="htmltype" value="select"/>
         <field name="htmlvalue" value="default"/>
-        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'text-normal':'Отключен', 'text-bold':'Включен'}"/>
+        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'normal':'Отключен', 'bold':'Включен'}"/>
         <field name="description" value="Жирный шрифт текста кнопки на странице корзины товаров"/>
         <field name="active" value="1"/>
     </object>
@@ -101,7 +101,7 @@
         <field name="name" value="cart_button_text_case"/>
         <field name="htmltype" value="select"/>
         <field name="htmlvalue" value="default"/>
-        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'text-lowercase':'Нижний', 'text-standartcase':'Стандартный', 'text-uppercase':'Верхний'}"/>
+        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'lowercase':'Нижний', 'standartcase':'Стандартный', 'upper':'Верхний'}"/>
         <field name="description" value="Регистр текста кнопки на странице корзины товара"/>
         <field name="active" value="1"/>
     </object>
@@ -166,7 +166,7 @@
         <field name="name" value="product_button_font_trans"/>
         <field name="htmltype" value="select"/>
         <field name="htmlvalue" value="default"/>
-        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'text-small':'Мелко', 'text-medium':'Средне', 'text-large':'Крупно'}"/>
+        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'small':'Мелко', 'medium':'Средне', 'large':'Крупно'}"/>
         <field name="description" value="Размер шрифта кнопки на странице карточки товара"/>
         <field name="active" value="1"/>
     </object>
@@ -174,7 +174,7 @@
         <field name="name" value="product_button_font_width"/>
         <field name="htmltype" value="select"/>
         <field name="htmlvalue" value="default"/>
-        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'text-normal':'Отключен', 'text-bold':'Включен'}"/>
+        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'normal':'Отключен', 'bold':'Включен'}"/>
         <field name="description" value="Жирный шрифт текста кнопки на странице карточки товара"/>
         <field name="active" value="1"/>
     </object>
@@ -182,7 +182,7 @@
         <field name="name" value="product_button_text_case"/>
         <field name="htmltype" value="select"/>
         <field name="htmlvalue" value="default"/>
-        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'text-lowercase':'Нижний', 'text-standartcase':'Стандартный', 'text-uppercase':'Верхний'}"/>
+        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'lowercase':'Нижний', 'standartcase':'Стандартный', 'upper':'Верхний'}"/>
         <field name="description" value="Регистр текста кнопки на странице карточки товара"/>
         <field name="active" value="1"/>
     </object>
@@ -247,7 +247,7 @@
         <field name="name" value="category_button_font_trans"/>
         <field name="htmltype" value="select"/>
         <field name="htmlvalue" value="default"/>
-        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'text-small':'Мелко', 'text-medium':'Средне', 'text-large':'Крупно'}"/>
+        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'small':'Мелко', 'medium':'Средне', 'large':'Крупно'}"/>
         <field name="description" value="Размер шрифта кнопки на странице категории товаров"/>
         <field name="active" value="1"/>
     </object>
@@ -255,7 +255,7 @@
         <field name="name" value="category_button_font_width"/>
         <field name="htmltype" value="select"/>
         <field name="htmlvalue" value="default"/>
-        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'text-normal':'Отключен', 'text-bold':'Включен'}"/>
+        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'normal':'Отключен', 'bold':'Включен'}"/>
         <field name="description" value="Жирный шрифт текста кнопки на странице категории товаров"/>
         <field name="active" value="1"/>
     </object>
@@ -263,7 +263,7 @@
         <field name="name" value="category_button_text_case"/>
         <field name="htmltype" value="select"/>
         <field name="htmlvalue" value="default"/>
-        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'text-lowercase':'Нижний', 'text-standartcase':'Стандартный', 'text-uppercase':'Верхний'}"/>
+        <field name="htmlpossiblevalues" value="{default:'По умолчанию', 'lowercase':'Нижний', 'standartcase':'Стандартный', 'upper':'Верхний'}"/>
         <field name="description" value="Регистр текста кнопки на странице категории товара"/>
         <field name="active" value="1"/>
     </object>

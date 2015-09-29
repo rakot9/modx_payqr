@@ -20,8 +20,19 @@ $payqrButton = new payqr_button($modx, 10);
 
 $config = $payqrButton->getPayqrItems();
 
+if(!isset($config['merchant_id'], $config['secret_key_in'], $config['secret_key_out']) ||
+    (empty($config['merchant_id']) && empty($config['secret_key_in']) && empty($config['secret_key_out']) )
+   )
+{
+    return "";
+}
+
 $payqrConfig = payqr_config::init($config['merchant_id'], $config['secret_key_in'], $config['secret_key_out']);
 
-$output = $payqrButton->getHtmlButton();
+$amount = 10;
+
+$output = payqr_buttongen::getInstance()
+            ->setPage("cart")
+            ->genereateButton(new payqr_button($modx, $amount, []));
 
 return $output;
