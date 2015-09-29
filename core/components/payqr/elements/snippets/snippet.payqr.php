@@ -1,4 +1,9 @@
 <?php
+
+require_once $modx->getOption('payqr_core_path', null, $modx->getOption('core_path') . 'components/payqr/') . 'model/payqr/Payqr/payqr_config.php';
+
+use Payqr\payqr_config;
+
 /** @var array $scriptProperties */
 /** @var payqr $payqr */
 if (!$payqr = $modx->getService('payqr', 'payqr', $modx->getOption('payqr_core_path', null, $modx->getOption('core_path') . 'components/payqr/') . 'model/payqr/', $scriptProperties)) {
@@ -11,37 +16,12 @@ if (!($payqr instanceof payqr) || !($pdoTools instanceof pdoTools)) return '';
 
 $payqr->initPopupJS();
 
-return $payqr->getButton($page);
-    
+$payqrButton = new payqr_button($modx, 10);
 
-// Do your snippet code here. This demo grabs 5 items from our custom table.
-$tpl = $modx->getOption('tpl', $scriptProperties, 'Item');
-$sortby = $modx->getOption('sortby', $scriptProperties, 'name');
-$sortdir = $modx->getOption('sortbir', $scriptProperties, 'ASC');
-$limit = $modx->getOption('limit', $scriptProperties, 5);
-$outputSeparator = $modx->getOption('outputSeparator', $scriptProperties, "\n");
-$toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
+$config = $payqrButton->getPayqrItems();
 
-// Build query
-$c = $modx->newQuery('payqrItem');
-$c->sortby($sortby, $sortdir);
-$c->limit($limit);
-$items = $modx->getIterator('payqrItem', $c);
+$payqrConfig = payqr_config::init($config['merchant_id'], $config['secret_key_in'], $config['secret_key_out']);
 
-// Iterate through items
-$list = array();
-/** @var payqrItem $item */
-foreach ($items as $item) {
-	$list[] = $modx->getChunk($tpl, $item->toArray());
-}
+$output = $payqrButton->getHtmlButton();
 
-// Output
-$output = implode($outputSeparator, $list);
-if (!empty($toPlaceholder)) {
-	// If using a placeholder, output nothing and set output to specified placeholder
-	$modx->setPlaceholder($toPlaceholder, $output);
-
-	return '';
-}
-// By default just return output
 return $output;

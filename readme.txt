@@ -1,7 +1,7 @@
 #Установка модуля#
 * Отображение кнопки при детальном просмотре товара
-* Отображение кпноки под каждым из товаров. Находим Чанк, отвечающий за отображение товара и вставляем [[payqr?&page=product&id=[[+id]]]]
-* Отображение кнопки в корзине товаров [[payqr?&page=cart]]
+* Отображение кпноки под каждым из товаров. Находим Чанк, отвечающий за отображение товара и вставляем [[!payqr?&page=product&id=[[+id]]]]
+* Отображение кнопки в корзине товаров [[!payqr?&page=cart]]
 
 
 
@@ -14,9 +14,13 @@
     cartTpl         на shopCart_small
     flyToCart       на nofly
     orderFormPageId на 6
+    className       ShopContent
+    packageName     shop
 
 * cart_order_page -> Shopkeeper3
     cartRowTpl      на shopCartRow_full
     cartTpl         на shopCart_full
     orderFormPageId на 6
     flyToCart       на nofly
+    className       ShopContent
+    packageName     shop
