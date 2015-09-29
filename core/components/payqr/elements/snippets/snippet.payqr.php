@@ -29,10 +29,8 @@ if(!isset($config['merchant_id'], $config['secret_key_in'], $config['secret_key_
 
 $payqrConfig = payqr_config::init($config['merchant_id'], $config['secret_key_in'], $config['secret_key_out']);
 
-$amount = 10;
-
 $output = payqr_buttongen::getInstance()
-            ->setPage("cart")
+            ->setPage($page)
             ->genereateButton(new payqr_button($modx, $amount, []));
 
 return $output;

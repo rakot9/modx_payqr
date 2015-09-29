@@ -62,7 +62,10 @@ class payqr_buttongen {
             return "";
         }
         
-        $this->setPageButtonParam();
+        if(!$this->setPageButtonParam())
+        {
+            return "";
+        }
         
         $button = $this->payqrButton->getHtmlButton();
         
@@ -78,7 +81,7 @@ class payqr_buttongen {
                 ) 
           )
         {
-            return "";
+            return false;
         }
         
         $this->payqrButton->setWidth($this->config[ $this->page . '_button_width']);
@@ -93,5 +96,7 @@ class payqr_buttongen {
         $this->payqrButton->setMessageText($this->config['user_message_text']);
         $this->payqrButton->setMessageImageUrl($this->config['user_message_imageurl']);
         $this->payqrButton->setMessageUrl($this->config['user_message_url']);
+        
+        return true;
     }
 }
