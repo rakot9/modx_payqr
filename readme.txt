@@ -4,6 +4,10 @@
 * Отображение кнопки в корзине товаров [[!payqr?&page=cart]]
 
 
+#настройка уведомлений#
+правим .htaccess файл и вносим следующие строки ``` RewriteRule ^rest/index.php$ rest/index.php?_rest=$1 [QSA,NC,L] ```
+
+
 
 ```[[payqr?&page=[[*id]]]]``` 
 
