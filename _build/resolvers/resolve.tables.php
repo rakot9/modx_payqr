@@ -135,9 +135,14 @@ if ($object->xpdo) {
             }
             foreach ($objects as $tmp) {
                 $manager->removeObjectContainer($tmp);
-            }
-            */
-            break;
+            }*/
+            
+            $removed = $modx->exec('DROP TABLE IF EXISTS '.$modx->getOption('table_prefix').'payqr_items');
+            
+            if ($removed === false && $modx->errorCode() !== '' && $modx->errorCode() !== PDO::ERR_NONE) {
+                print 'Could not drop table! ERROR: ' . print_r($modx->pdo->errorInfo(),true); 
+            } 
+            return true;
     }
 }
 return true;
