@@ -1,60 +1,29 @@
 <?php
 
 //получаем способы доставки товара
-//получаем статусы заказов
-//получаем информацию о кнопке
-
 $delivery_cases = array();
 
-if(isset($payqr_settings) && !empty($payqr_settings->payqr_require_deliverycases)
-	&& $payqr_settings->payqr_require_deliverycases != "deny")
+$deliveryObj = new payqr_deliverycase();
+
+$deliveries = $deliveryObj->getDeliveryCases();
+
+$i = 1;
+
+$payqrOrder = new payqr_order($modx, $Payqr);
+
+$order_amount = $payqrOrder->getTotal();
+
+foreach($deliveries as $delivery)
 {
-	$DeliveryModel = \Payqr::getInstance()->getDeliveryModel();
-	$PaymentModel = \Payqr::getInstance()->getPaymentModel();
-
-
-	$deliveries = $DeliveryModel->getAvailableDelivery($PaymentModel->getId());
-
-	$i = 1;
-
-	foreach($deliveries as $delivery)
-	{
-		$delivery['free_from'] = $PaymentModel->calculatePrice(intval($delivery['free_from']));
-		
-		if(!empty($delivery['free_from']) && $delivery['free_from'] <= $Payqr->objectOrder->getAmount())
-		{
-			$delivery_cases[] = array(
-				'article' => $delivery['id'],
-				'number' => $i++,
-				'name' => $delivery['name'],
-				'description' => $delivery['description'],
-				'amountFrom' => 0,
-				'amountTo' => 0,
-			);
-		}
-		else
-		{
-			$delivery_amount = 0;
-
-			if($delivery['is_price_in_percent'] > 1)
-			{
-				$delivery_amount = ( $delivery['price'] / 100 ) * intval($Payqr->objectOrder->getAmount());
-			}
-			else 
-			{
-				$delivery_amount = $PaymentModel->calculatePrice((int)$delivery['price']);
-			}
-
-			$delivery_cases[] = array(
-				'article' => $delivery['id'],
-				'number' => $i++,
-				'name' => $delivery['name'],
-				'description' => $delivery['description'],
-				'amountFrom' => $delivery_amount,
-				'amountTo' => $delivery_amount,
-			);
-		}
-	}
+    $_delivery = array();
+    
+    $_delivery['article'] = $delivery['id'];
+    $_delivery['number'] = $i++;
+    $_delivery['name'] = $delivery['label'];
+    $_delivery['description'] = $delivery['label'];
+    $_delivery['amountFrom'] = $_delivery['amountTo'] = ($order_amount >= $delivery['free_start'])? 0 : $delivery['free_start'];
+    
+    $delivery_cases[] = $_delivery;
 }
 
 $Payqr->objectOrder->setDeliveryCases($delivery_cases);

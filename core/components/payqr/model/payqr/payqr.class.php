@@ -1,5 +1,9 @@
 <?php
 
+if(!defined('SHOPKEEPER_PATH')){
+    define('SHOPKEEPER_PATH', MODX_CORE_PATH."components/shopkeeper3/");
+}
+
 /**
  * The base class for payqr.
  */
@@ -8,7 +12,6 @@ class payqr {
 	public $modx;
 
 	private $merchantId;
-
 
 	/**
 	 * @param modX $modx
@@ -42,7 +45,88 @@ class payqr {
 
 		$this->merchantId = $this->getMerchant();
 	}
+               
+        public function getProductsData($page, $productsIds = array())
+        {
+            $productsData = array();
+            
+            if(in_array($page, array("category", "product")))
+            {
+                if(empty($productsIds))
+                {
+                    return array();
+                }
+                $criteria = $this->modx->newQuery('ShopContent');
+            
+                $criteria->where(array('id:IN' => $productsIds));
+
+                $items = $this->modx->getIterator('ShopContent', $criteria);
+                
+                foreach($items as $item)
+                {
+                    $productsData[] = array(
+                        "article" => $item->id,
+                        "name" => $item->pagetitle,
+                        "imageUrl" => "http://" .  $_SERVER['SERVER_NAME'] . (defined('MODX_ASSETS_URL')? MODX_ASSETS_URL : '/assets' ) . '/' . $item->image,
+                        "quantity" => 1,
+                        "amount" => $item->price
+                    );
+                }
+                return $productsData;
+            }
+            if(in_array($page, array("cart")))
+            {
+                //Определяем параметры сниппета Shopkeeper
+                $sys_property_sets = $this->modx->getOption( 'shk3.property_sets', $this->modx->config, 'default' );
+                $sys_property_sets = explode( ',', $sys_property_sets );
+                $propertySetName = trim( current( $sys_property_sets ) );
+
+                $snippet = $this->modx->getObject('modSnippet',array('name'=>'Shopkeeper3'));
+                $properties = $snippet->getProperties();
+                if( $propertySetName != 'default' && $this->modx->getCount( 'modPropertySet', array( 'name' => $propertySetName ) ) > 0 ){
+                    $propSet = $this->modx->getObject( 'modPropertySet', array( 'name' => $propertySetName ) );
+                    $propSetProperties = $propSet->getProperties();
+                    if(is_array($propSetProperties)) $properties = array_merge($properties,$propSetProperties);
+                }
+
+                $lang = $this->modx->getOption( 'lang', $properties, 'ru' );
+                $this->modx->getService( 'lexicon', 'modLexicon' );
+                $this->modx->lexicon->load( $lang . ':shopkeeper3:default' );
+
+                if( !empty( $_SESSION['shk_order'] ) ){
+
+                    require_once SHOPKEEPER_PATH . "model/shopkeeper.class.php";
+
+                    $shopCart = new Shopkeeper( $this->modx, $properties );
+
+                    $purchasesData = $shopCart->getProductsData( true );
+                    
+                    $_tmp_purchasesData = array();
+                    
+                    foreach( $shopCart->data as $p_data )
+                    {
+                        $_tmp_purchasesData[$p_data['id']] =  array("price" => $p_data['price'], "quantity" => $p_data['count']);
+                    }
+
+                    foreach($purchasesData as $cartItem)
+                    {
+                        $productsData[] = array(
+                            "article" => $cartItem['id'],
+                            "name" => $cartItem['pagetitle'],
+                            "imageUrl" => "http://" .  $_SERVER['SERVER_NAME'] . (defined('MODX_ASSETS_URL')? MODX_ASSETS_URL : '/assets' ) . '/' . $cartItem['image'],
+                            "quantity" => isset($_tmp_purchasesData[$cartItem['id']])? $_tmp_purchasesData[$cartItem['id']]["quantity"] : 1,
+                            "amount" => (isset($_tmp_purchasesData[$cartItem['id']])? $_tmp_purchasesData[$cartItem['id']]["quantity"] :1) * $cartItem['price']
+                        );
+                    }
+                }
+                return $productsData;
+            }
+        }
         
+        /**
+         * Возвращает merchantId магазина
+         * @return type
+         */
 	private function getMerchant()
 	{
 		$merchantId = null;
@@ -67,15 +151,4 @@ class payqr {
         {
             $this->modx->regClientStartupScript('https://payqr.ru/popup.js?merchId=' . $this->merchantId );
         }
-
-	public function getButton($page = "product")
-	{
-		return '<button
-			class="payqr-button"
-			data-scenario="buy"
-			data-cart=\'[{"article":"123123","name":"Хороший товар","quantity":"1","amount":"500.00","imageurl":"http://modastuff.ru/item1.jpg"},{"article":"123123","name":"Очень хороший товар","quantity":"2","amount":"1000.00","imageurl":"http://modastuff.ru/item2.jpg"}]\'
-			data-amount="2500.00"
-                        data-userdata="'.$page.'"
-			style="width: 163px; height: 36px;" > Купить быстрее </button>';
-	}
 }

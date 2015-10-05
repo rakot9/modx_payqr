@@ -14,8 +14,11 @@ if (!($payqr instanceof payqr) || !($pdoTools instanceof pdoTools)) return '';
 
 $payqr->initPopupJS();
 
+//Получаем список идентификаторов товаров
+$productsData = $payqr->getProductsData($page, (isset($id) && !empty(trim($id)))? array(0 => $id) : array() );
+
 $output = payqr_buttongen::getInstance()
             ->setPage($page)
-            ->genereateButton(new payqr_button($modx, $amount, []));
+            ->genereateButton(new payqr_button($modx, $productsData));
 
 return $output;

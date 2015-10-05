@@ -86,6 +86,7 @@ class payqr_buttongen {
             return false;
         }
         
+        $this->payqrButton->setUserData(json_encode($this->payqrButton->productsArray));       
         $this->payqrButton->setWidth($this->config[ $this->page . '_button_width']);
         $this->payqrButton->setHeight($this->config[ $this->page . '_button_height']);
         $this->payqrButton->setColor($this->config[ $this->page . '_button_color']);

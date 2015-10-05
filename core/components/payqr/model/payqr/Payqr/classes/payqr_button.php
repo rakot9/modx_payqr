@@ -13,8 +13,8 @@ class payqr_button {
     private $width = '163'; // Ширина кнопки PayQR
     private $height = '36'; // Высота кнопки PayQR
     private $scenario = 'buy'; // Сценарий, влияющий на название кнопки в приложении PayQR и другие текстовые изменения (buy - "Купить", pay - "Оплатить")
-    private $productsArray; // Содержание заказа (массив позиций заказа)
-    private $amount; // Сумма заказа
+    private $productsData; // Содержание заказа (массив позиций заказа)
+    private $amount = 0; // Сумма заказа
 
     // варианты оформления кнопки PayQR
     private $color = array(
@@ -98,18 +98,25 @@ class payqr_button {
     public $userdata = false; // заполнение любых дополнительных служебных/аналитических данных в свободном формате
     
     /**
-    * @param modX $modx
-    * @param array $config
-    */
-    public function __construct(modX &$modx, $amount, $productsArray = array()) {
+     * 
+     * @param modX $modx
+     * @param type $productsData
+     */
+    public function __construct(modX &$modx, $productsData = array()) {
         
         $this->modx = & $modx;
         
         $this->setPayqrItems();
         
-        $this->amount = $amount;
+        foreach($productsData as $product)
+        {
+            if(isset($product['amount'], $product['quantity']))
+            {
+                $this->amount += $product['amount'];
+            }
+        }
         
-	$this->productsArray = $productsArray;
+	$this->productsData = $productsData;
     }
     
     /**
@@ -340,7 +347,7 @@ class payqr_button {
                     class="payqr-button '. $class .'"
                     '. $style .'
                     data-scenario="'. $this->scenario .'"
-                    data-cart=\''. json_encode($this->productsArray) .'\'
+                    data-cart=\''. json_encode($this->productsData) .'\'
                     '.($this->firstname_required ? 'data-firstname-required="required"' : 'data-firstname-required="notrequired"') .'
                     '.($this->lastname_required ? 'data-lastname-required="required"' : 'data-lastname-required="notrequired"') .'
                     '.($this->phone_required ? 'data-phone-required="required"' : 'data-phone-required="notrequired"') .'
@@ -363,4 +370,3 @@ class payqr_button {
             return $html;
     }
 }
-

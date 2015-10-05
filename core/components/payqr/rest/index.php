@@ -30,7 +30,7 @@ if (!$rest->checkPermissions()) {
 //
 require_once $modx->getOption('payqr_core_path', null, $modx->getOption('core_path') . 'components/payqr/') . 'model/payqr/Payqr/payqr_config.php';
 
-$payqr_button = new payqr_button($modx, 0, []);
+$payqr_button = new payqr_button($modx, []);
 
 $config = $payqr_button->getPayqrItems();
 

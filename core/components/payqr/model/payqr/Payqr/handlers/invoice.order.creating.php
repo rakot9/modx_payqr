@@ -19,8 +19,7 @@ if(!isset($uData->user_id) && empty($uData->user_id))
 	//создаем пользователя в системе
 	$user_email = isset($cData->email)? $cData->email : $uData->email;
 
-
-	$user_id = null;
+        $user_id = null;
 }
 else
 {
@@ -29,53 +28,64 @@ else
 }
 
 //Формируем информацию о покупателе
-$user_for_order_comment = "Заказ сделан через платежный сервис PayQR. ";
-
-if(isset($cData->firstName) && !empty($cData->firstName))
-{
-	$user_for_order_comment .= "Имя покупателя: " . $cData->firstName . ". ";
-}
+$contacts = array();
+$FIO = "";
 
 if(isset($cData->lastName) && !empty($cData->lastName))
 {
-	$user_for_order_comment .= "Фамилия покупателя: " . $cData->lastName . ". ";
+    $FIO = $cData->lastName . " ";
+}
+
+if(isset($cData->firstName) && !empty($cData->firstName))
+{
+    $FIO = $cData->firstName . " ";
 }
 
 if(isset($cData->middlename) && !empty($cData->middlename))
 {
-	$user_for_order_comment .= "Отчество покупателя: " . $cData->middlename . ". ";
+    $FIO = $cData->middlename;
 }
 
-if(isset($cData->delivery) && !empty($cData->delivery))
-{
-	$user_for_order_comment .= "Доставка покупателя: " . $cData->delivery . ". ";
-}
-
-if(isset($cData->promo) && !empty($cData->promo))
-{
-	$user_for_order_comment .= "Промо-код покупателя: " . $cData->promo . ". ";
+if(!empty($FIO))
+{ 
+    $contacts[] = array(
+        "name" => "fullname",
+        "value" => $FIO,
+        "label" => "Имя",
+    );
 }
 
 if(isset($cData->email) && !empty($cData->email))
 {
-	$user_for_order_comment .= "Email покупателя: " . $cData->email . ". ";
+    $contacts[] = array(
+        "name" => "email",
+        "value" => $cData->email,
+        "label" => "Адрес эл. почты",
+    );
 }
 
 if(isset($cData->phone) && !empty($cData->phone))
 {
-	$user_for_order_comment .= "Телефон покупателя: " . $cData->phone . ". ";
+    $contacts[] = array(
+        "name" => "phone",
+        "value" => $cData->phone,
+        "label" => "Телефон",
+    );
 }
 
-//получаем статусы заказов
-$status_created = isset($payqr_settings->payqr_status_creatted) && !empty($payqr_settings->payqr_status_creatted)? $payqr_settings->payqr_status_creatted : 0;
+$contacts[] = array(
+    "name" => "message",
+    "value" => "Заказ сделан через платежный сервис PayQR.",
+    "label" => "Комментарий",
+);
 
+//получаем статусы заказов
+$status_created = isset($config['payqr_status_creatted']) && !empty($config['payqr_status_creatted'])? $config['payqr_status_creatted'] : 0;
 
 //создаем заказ на основе актуализированным данных
-$OrderModel = \Payqr::getInstance()->getOrderModel();
+$OrderModel = new payqr_order($modx, $Payqr);
 
-$OrderModel->setComment($user_for_order_comment);
-
-$oOrder = $OrderModel->initOrder($Payqr);
+$order_id = $OrderModel->createShopkeeper3Order( $user_id, $contacts);
 
 $amount = $OrderModel->getTotal();
 
@@ -86,8 +96,6 @@ if(empty($amount))
 }
 
 $Payqr->objectOrder->setAmount($amount);
-
-$order_id = $OrderModel->CreateOrder();
 
 if(!$order_id)
 {
@@ -110,13 +118,13 @@ else
 }
 
 $userdata = array(
-			"user_id" => $user_id,
-			"session_id" => $uData->session_id,
-			"order_id" => $order_id,
-			"amount" => $amount,
-			"message" => (isset($payqr_settings->payqr_user_message_text)? $payqr_settings->payqr_user_message_text : ""),
-			"messageImageURL" => (isset($payqr_settings->payqr_user_message_imageurl)? $payqr_settings->payqr_user_message_imageurl : ""),
-			"messageURL" => (isset($payqr_settings->payqr_user_message_url)? $payqr_settings->payqr_user_message_url : "")
+    "user_id" => $user_id,
+    "session_id" => "session"/*$uData->session_id*/,
+    "order_id" => $order_id,
+    "amount" => $amount,
+    "message" => (isset($config['payqr_user_message_text'])? $config['payqr_user_message_text'] : ""),
+    "messageImageURL" => (isset($config['payqr_user_message_imageurl'])? $config['payqr_user_message_imageurl'] : ""),
+    "messageURL" => (isset($config['payqr_user_message_url'])? $config['payqr_user_message_url'] : "")
 );
 
 $Payqr->objectOrder->setUserData(json_encode($userdata));
