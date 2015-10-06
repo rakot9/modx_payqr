@@ -35,16 +35,25 @@ class payqr_order {
         return $this->modx;
     }
     
+    /**
+     * @param type $Payqr
+     */
     private function setPayqr($Payqr)
     {
         $this->Payqr = $Payqr->objectOrder;
     }
     
+    /**
+     * @return type
+     */
     private function getPayqr()
     {
         return $this->Payqr;
     }
     
+    /**
+     * Инициализируем в сессию данные о товарах из корзины 
+     */
     public function initSessionOrderData()
     {
         $productsData = $this->getPayqr()->getCart();
@@ -60,7 +69,7 @@ class payqr_order {
             $price = 0;
             
             //получаем информацию о товаре
-            $result = $this->modx->query("SELECT * FROM modx_shop_content WHERE id=" . stripcslashes($product->article));
+            $result = $this->getModX()->query("SELECT * FROM ".$this->getModX()->getOption('table_prefix')."shop_content WHERE id=" . stripcslashes($product->article));
             
             if (!is_object($result)) {
                 $price = 0;
@@ -69,7 +78,6 @@ class payqr_order {
                 $row = $result->fetch(PDO::FETCH_ASSOC);
                 $price = $row['price'];
             }
-
             
             //
             $_SESSION['shk_order'][] = array(
@@ -188,7 +196,11 @@ class payqr_order {
         }
     }
     
-    public function getTotal()
+    /**
+     * @param type $delivery
+     * @return type
+     */
+    public function getTotal($delivery = false)
     {
         $productsData = $this->getPayqr()->getCart();
         
@@ -197,7 +209,7 @@ class payqr_order {
         foreach($productsData as $product)
         {
             //получаем информацию о товаре
-            $result = $this->modx->query("SELECT * FROM ". $this->getModX()->db->config['table_prefix'] ."shop_content WHERE id=" . stripcslashes($product->article));
+            $result = $this->getModX()->query("SELECT * FROM ". $this->getModX()->getOption('table_prefix') ."shop_content WHERE id=" . stripcslashes($product->article));
             
             if (is_object($result)) 
             {
@@ -205,6 +217,27 @@ class payqr_order {
                 $total+= $row['price'] * $product->quantity;
             }
         }
+        
+        if($delivery)
+        {        
+            $delivery = $this->getPayqr()->getDeliveryCasesSelected();
+
+            //проверяем доставку
+            if(isset($delivery->amountFrom) && !empty($delivery->amountFrom) && $total < $delivery->amountFrom)
+            {
+                $total = (float)$total + (float) $delivery->amountFrom;
+            }
+        }
+        
         return $total;
+    }
+    
+    /**
+     * @param type $orderId
+     * @param type $status
+     */
+    public function changeStatus($orderId, $status)
+    {
+        $this->getModX()->query("UPDATE ". $this->getModX()->getOption('table_prefix'). "shopkeeper3_orders SET status = ".  stripcslashes($status)." WHERE id='" . stripcslashes($orderId) ."'");
     }
 }

@@ -150,5 +150,6 @@ class payqr {
         public function initPopupJS()
         {
             $this->modx->regClientStartupScript('https://payqr.ru/popup.js?merchId=' . $this->merchantId );
+            $this->modx->regClientStartupScript( $this->modx->config['assets_url'] . 'components/payqr/js/mgr/payqr_order.js' );
         }
 }

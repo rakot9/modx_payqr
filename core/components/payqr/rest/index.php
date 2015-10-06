@@ -35,7 +35,11 @@ $payqr_button = new payqr_button($modx, []);
 $config = $payqr_button->getPayqrItems();
 
 $payqrConfig = payqr_config::init($config['merchant_id'], $config['secret_key_in'], $config['secret_key_out']);
-payqr_config::setLogFile($config['log_url']);
+if(isset($config['log_url']) && !empty($config['log_url']))
+{
+    payqr_config::$enabledLog = true;
+    payqr_config::setLogFile($config['log_url']);
+}
 
 payqr_logs::addEnter();
 

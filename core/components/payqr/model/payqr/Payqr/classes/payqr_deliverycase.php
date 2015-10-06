@@ -18,25 +18,21 @@ class payqr_deliverycase {
      */
     public function getDeliveryCases()
     {
-        $query = $this->modx->newQuery( 'shk_config' );
+        $result = $this->modx->query("SELECT value, xtype FROM ". $this->modx->getOption('table_prefix') ."shopkeeper3_config WHERE setting='delivery'");
         
-        if( !empty( $settings ) ){
-            $query->where( array( "setting" => 'delivery' ) );
-        }
-        $config = $this->modx->getIterator( 'shk_config', $query );
-        
-        if( !empty( $config ) ){
-            
-            foreach( $config as $key => $conf ){
-                
-                if( $conf->xtype == 'array' ){
-                    $config_value = json_decode( $conf->value, true );
-                }else{
-                    $config_value = $conf->value;
-                }
-            }
+        if (!is_object($result)) {
+            return array();
         }
         
-        return $config_value;
+        $row = $result->fetch(PDO::FETCH_ASSOC);
+        
+        $delivery_json = $row['value'];
+        
+        if(!empty($delivery_json) && $row['xtype'] == 'array')
+        {
+            return json_decode( $delivery_json, true );
+        }
+        
+        return array();
     }
 } 

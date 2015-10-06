@@ -82,11 +82,14 @@ class payqr_button {
 
     public $firstname_required = false; // запрос имени покупателя
     public $lastname_required = false; // запрос фамилии покупателя
+    public $middlename_required = false; // запрос отчества покупателя
     public $phone_required = false; // запрос телефона покупателя
     public $email_required = false; // запрос e-mail покупателя
     public $delivery_required = false; // запрос адреса доставки покупателя
     public $deliverycases_required = false; // выбор способа доставки
     public $pickpoints_required = false; // выбор пункта самовывоза
+    public $promocode_required = false;
+    public $promocard_required = false;
 
     private $orderid = false; // номер заказа
     private $ordergroup = false; // номер товарной группы
@@ -348,13 +351,16 @@ class payqr_button {
                     '. $style .'
                     data-scenario="'. $this->scenario .'"
                     data-cart=\''. json_encode($this->productsData) .'\'
-                    '.($this->firstname_required ? 'data-firstname-required="required"' : 'data-firstname-required="notrequired"') .'
-                    '.($this->lastname_required ? 'data-lastname-required="required"' : 'data-lastname-required="notrequired"') .'
-                    '.($this->phone_required ? 'data-phone-required="required"' : 'data-phone-required="notrequired"') .'
-                    '.($this->email_required ? 'data-email-required="required"' : 'data-email-required="notrequired"') .'
-                    '.($this->delivery_required ? 'data-delivery-required="required"' : 'data-delivery-required="notrequired"') .'
-                    '.($this->deliverycases_required ? 'data-deliverycases-required="required"' : 'data-deliverycases-required="notrequired"') .'
-                    '.($this->pickpoints_required ? 'data-pickpoints-required="required"' : 'data-pickpoints-required="notrequired"') .'
+                    '.($this->firstname_required ? 'data-firstname-required="'.$this->firstname_required.'"' : 'data-firstname-required="deny"') .'
+                    '.($this->lastname_required ? 'data-lastname-required="'.$this->lastname_required.'"' : 'data-lastname-required="deny"') .'
+                    '.($this->middlename_required ? 'data-middlename-required="'.$this->middlename_required.'"' : 'data-middlename-required="deny"') .'
+                    '.($this->phone_required ? 'data-phone-required="'.$this->phone_required.'"' : 'data-phone-required="deny"') .'
+                    '.($this->email_required ? 'data-email-required="'.$this->email_required.'"' : 'data-email-required="deny"') .'
+                    '.($this->delivery_required ? 'data-delivery-required="'.$this->delivery_required.'"' : 'data-delivery-required="deny"') .'
+                    '.($this->deliverycases_required ? 'data-deliverycases-required="'.$this->deliverycases_required.'"' : 'data-deliverycases-required="deny"') .'
+                    '.($this->promocode_required ? 'data-promocode-required="'.$this->promocode_required.'"' : 'data-promocode-required="deny"') .'
+                    '.($this->promocard_required ? 'data-promocard-required="'.$this->promocard_required.'"' : 'data-promocard-required="deny"') .'
+                    '.($this->pickpoints_required ? 'data-pickpoints-required="'.$this->pickpoints_required.'"' : 'data-pickpoints-required="deny"') .'
                     '.($this->ordergroup ? 'data-ordergroup="'.$this->ordergroup.'"' : '') .'
                     '.($this->promo_required ? 'data-promo-required="required"' : 'data-promo-required="notrequired"') .'
                     '.($this->promo_description ? 'data-promo-description="'.$this->promo_description.'"' : '') .'

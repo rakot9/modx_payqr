@@ -83,39 +83,36 @@ $contacts[] = array(
 $status_created = isset($config['payqr_status_creatted']) && !empty($config['payqr_status_creatted'])? $config['payqr_status_creatted'] : 0;
 
 //создаем заказ на основе актуализированным данных
-$OrderModel = new payqr_order($modx, $Payqr);
+$payqrOrder = new payqr_order($modx, $Payqr);
 
-$order_id = $OrderModel->createShopkeeper3Order( $user_id, $contacts);
+$order_id = $payqrOrder->createShopkeeper3Order( $user_id, $contacts);
 
-$amount = $OrderModel->getTotal();
+//Получаем стоимость товара с доставкой
+$amount = $payqrOrder->getTotal(true);
 
 if(empty($amount))
 {
-	//не смогли посчитать сумму заказа
-	return false;
+    payqr_logs::log('Не смогли получить amount у заказа!');
+    //не смогли посчитать сумму заказа
+    return false;
 }
+payqr_logs::log('Итоговая стоимость amount у заказа : ' . $amount);
 
 $Payqr->objectOrder->setAmount($amount);
 
 if(!$order_id)
 {
-	//фэйлим заказ клиента
-	//не получилось создать заказ
-	return false;
+    payqr_logs::log('Не смогли получить orderId у заказа!');
+    //фэйлим заказ клиента
+    //не получилось создать заказ
+    return false;
 }
 
-//формируем данные для таблицы order_items
+payqr_logs::log('Получили orderId у заказа: ' . $order_id);
+
 $Payqr->objectOrder->setOrderId($order_id);
 
-//проверяем в каком контексте был приобретен товар
-if(isset($uData->page) && in_array($uData->page, array('category', 'product')))
-{
-	//корзину не будем очищать, пропускаем данную ветку
-}
-else 
-{
-	//производим очистку корзины
-}
+//Корзину необходимо очищать 
 
 $userdata = array(
     "user_id" => $user_id,

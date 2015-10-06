@@ -1,14 +1,22 @@
 <?php
 
-if(isset($payqr_settings, $payqr_settings->payqr_status_paid))
+if(isset($config, $config['status_paid']))
 {
 	$order_id = $Payqr->objectOrder->getOrderId();
+        
+        if(empty($order_id))
+        {
+            return false;
+        }
 
-	$OrderModel = \Payqr::getInstance()->getOrderModel();
-
-	$payqr_settings->payqr_status_paid = intval($payqr_settings->payqr_status_paid);
-
-	$OrderModel->updateStatus($order_id, $payqr_settings->payqr_status_paid);
-
-	$OrderModel->setPaid($order_id);	
+        $status_paid = payqr_status::getInstance($modx)->getStatusId($config['status_paid']);
+        
+        if(empty($status_paid))
+        {
+            return false;
+        }
+        
+        $payqrOrder = new payqr_order($modx, $Payqr);
+        
+        $payqrOrder->changeStatus($order_id, $status_paid);
 }

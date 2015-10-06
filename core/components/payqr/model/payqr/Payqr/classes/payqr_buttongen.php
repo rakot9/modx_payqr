@@ -86,6 +86,19 @@ class payqr_buttongen {
             return false;
         }
         
+        //устанавливаем переключатели запрашиваемой информации
+        $this->payqrButton->firstname_required = $this->config['require_firstname'];
+        $this->payqrButton->lastname_required = $this->config['require_lastname'];
+        $this->payqrButton->middlename_required = $this->config['require_middlename'];
+        $this->payqrButton->phone_required = $this->config['require_phone'];
+        $this->payqrButton->email_required = $this->config['require_email'];
+        $this->payqrButton->delivery_required = $this->config['require_delivery'];
+        $this->payqrButton->deliverycases_required = $this->config['require_deliverycases'];
+        $this->payqrButton->pickpoints_required = $this->config['require_pickpoints'];
+        $this->payqrButton->promocode_required = $this->config['require_promo_code'];
+        $this->payqrButton->promocard_required = $this->config['require_promo_card'];
+        //
+        
         $this->payqrButton->setUserData(json_encode($this->payqrButton->productsArray));       
         $this->payqrButton->setWidth($this->config[ $this->page . '_button_width']);
         $this->payqrButton->setHeight($this->config[ $this->page . '_button_height']);

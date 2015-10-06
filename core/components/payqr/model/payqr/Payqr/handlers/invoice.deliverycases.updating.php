@@ -3,7 +3,7 @@
 //получаем способы доставки товара
 $delivery_cases = array();
 
-$deliveryObj = new payqr_deliverycase();
+$deliveryObj = new payqr_deliverycase($modx);
 
 $deliveries = $deliveryObj->getDeliveryCases();
 
@@ -27,8 +27,3 @@ foreach($deliveries as $delivery)
 }
 
 $Payqr->objectOrder->setDeliveryCases($delivery_cases);
-
-function __log($message = null, $line = 0, $debug = false, $delete_old_log_file = false)
-{
-	if($delete_old_log_file) @unlink("__worker.log");if(empty($message) || !$debug) return;$fp = fopen("__worker.log", "a");fwrite($fp, "[{$line}]\r\n\t{$message}\r\n");fclose($fp);
-}
