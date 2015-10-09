@@ -5,7 +5,6 @@
 class payqr_status {
 
     private static $modx;
-    
     private static $instance;
     
     public function __construct() {}

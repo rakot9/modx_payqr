@@ -76,111 +76,134 @@ if ($object->xpdo) {
                         $manager->removeIndex($tmp, $index);
                     }
                 }
+            }
+            
+            unset($objects);
+            
+            $payqrDataFile = MODX_CORE_PATH . 'components/payqr/model/schema/payqr.data.schema.xml';
                 
-                $payqrDataFile = MODX_CORE_PATH . 'components/payqr/model/schema/payqr.data.schema.xml';
-                
-                if (is_file($payqrDataFile)) {
-                    $schema = new SimpleXMLElement($payqrDataFile, 0, true);
-                    if (isset($schema->object)) {
-                        foreach ($schema->object as $object) {
-                            $objects[] = $object;
-                        }
+            if (is_file($payqrDataFile)) {
+                $schema = new SimpleXMLElement($payqrDataFile, 0, true);
+                if (isset($schema->object)) {
+                    foreach ($schema->object as $object) {
+                        $objects[] = $object;
                     }
-                    unset($schema);
+                }
+                unset($schema);
+            }
+
+            //обходим object  в xml
+            foreach($objects as $payqr_params)
+            {
+                $insert_data = array();
+
+                foreach($payqr_params->field as $field_row)
+                {
+                    $insert_data[(string)$field_row['name']] = (string)$field_row['value'];
                 }
 
-                //обходим object  в xml
-                foreach($objects as $payqr_params)
+                if(empty($insert_data))
                 {
-                    $insert_data = array();
-                    
-                    foreach($payqr_params->field as $field_row)
-                    {
-                        $insert_data[(string)$field_row['name']] = (string)$field_row['value'];
-                    }
-                    
-                    if(empty($insert_data))
-                    {
-                        continue;
-                    }
-                    
-                    $payqr_settings = $modx->newObject('payqrItem');
-                    
-                    $payqr_settings->fromArray($insert_data);
-                    
-                    //$saved = $payqr_settings->save();
+                    continue;
                 }
-                
-                //Вставляем предопределенные значения для полей: hook_handler_url, log_url
-                $modx->query("UPDATE " . $modx->getOption('table_prefix') ."payqr_items SET htmlvalue = '" . "http://" .  $_SERVER['SERVER_NAME'] . "/rest/index.php?_rest=receiver" . "' WHERE name='hook_handler_url'");
-                $modx->query("UPDATE " . $modx->getOption('table_prefix') ."payqr_items SET htmlvalue = '" . "http://" .  $_SERVER['SERVER_NAME'] . "/rest/payqr.log" . "' WHERE name='log_url'");
-                
-                //копируем директорию "rest" вместе с ее содержимым из места, куда устанавливается модуль:
-                // @path: core/components/payqr/
-                
-                
-                //создаем таблицу для связки order_id и invoice
-                $payqrDataFile = MODX_CORE_PATH . 'components/payqr/model/schema/orderinvoice.data.schema.xml';
-                
-                unset($objects);
-                if (is_file($payqrDataFile)) {
-                    $schema = new SimpleXMLElement($payqrDataFile, 0, true);
-                    if (isset($schema->object)) {
-                        foreach ($schema->object as $object) {
-                            $objects[] = $object;
-                        }
-                    }
-                    unset($schema);
-                }
-                foreach($objects as $payqr_params)
+
+                $payqr_settings = $modx->newObject('payqrItem');
+
+                $payqr_settings->fromArray($insert_data);
+
+                $saved = $payqr_settings->save();
+            }
+
+            //Вставляем предопределенные значения для полей: hook_handler_url, log_url
+            $modx->query("UPDATE " . $modx->getOption('table_prefix') ."payqr_items SET htmlvalue = '" . "http://" .  $_SERVER['SERVER_NAME'] . "/rest/index.php?_rest=receiver" . "' WHERE name='hook_handler_url'");
+            $modx->query("UPDATE " . $modx->getOption('table_prefix') ."payqr_items SET htmlvalue = '" . "http://" .  $_SERVER['SERVER_NAME'] . "/rest/payqr.log" . "' WHERE name='log_url'");
+
+            //копируем директорию "rest" вместе с ее содержимым из места, куда устанавливается модуль:
+            // @path: core/components/payqr/
+            //
+            if(is_dir(MODX_CORE_PATH . 'components/payqr/rest'))
+            {
+                $isset_rest_dir = false;
+                //проверяем существует ли директория "цель"
+                if(is_dir(MODX_BASE_PATH . '/rest'))
                 {
-                    $insert_data = array();
-                    
-                    foreach($payqr_params->field as $field_row)
-                    {
-                        $insert_data[(string)$field_row['name']] = (string)$field_row['value'];
-                    }
-                    
-                    if(empty($insert_data))
-                    {
-                        continue;
-                    }
-                    
-                    $payqr_settings = $modx->newObject('orderInvoice');
-                    
-                    $payqr_settings->fromArray($insert_data);
-                    
-                    $saved = $payqr_settings->save();
+                    $isset_rest_dir = true;
                 }
-                
-                //проверяем установлена ли платежная система в shopkeeper3_config
-                $result = $modx->query("SELECT value, xtype FROM ". $modx->getOption('table_prefix') ."shopkeeper3_config WHERE setting = 'payments'");
-                
-                if (is_object($result)) 
+                else
                 {
-                    $row = $result->fetch(PDO::FETCH_ASSOC);
-                    
-                    if(isset($row['xtype']) && $row['xtype'] == 'array')
+                    if(mkdir(MODX_BASE_PATH . '/rest', 0755))
                     {
-                        $payments = json_decode( $row['value'], true );
+                        $isset_rest_dir = true;
                     }
-                    
-                    $is_Payqr = false;
-                    
-                    foreach($payments as $payment)
+                }
+
+                if($isset_rest_dir)
+                {
+                    copy(MODX_CORE_PATH . 'components/payqr/rest/index.php', MODX_BASE_PATH . '/rest/index.php');
+                }
+            }
+
+            //создаем таблицу для связки order_id и invoice
+            /*$payqrDataFile = MODX_CORE_PATH . 'components/payqr/model/schema/orderinvoice.data.schema.xml';
+
+            unset($objects);
+            if (is_file($payqrDataFile)) {
+                $schema = new SimpleXMLElement($payqrDataFile, 0, true);
+                if (isset($schema->object)) {
+                    foreach ($schema->object as $object) {
+                        $objects[] = $object;
+                    }
+                }
+                unset($schema);
+            }
+            foreach($objects as $payqr_params)
+            {
+                $insert_data = array();
+
+                foreach($payqr_params->field as $field_row)
+                {
+                    $insert_data[(string)$field_row['name']] = (string)$field_row['value'];
+                }
+
+                if(empty($insert_data))
+                {
+                    continue;
+                }
+
+                $payqr_settings = $modx->newObject('orderInvoice');
+
+                $payqr_settings->fromArray($insert_data);
+
+                $saved = $payqr_settings->save();
+            }*/
+
+            //проверяем установлена ли платежная система в shopkeeper3_config
+            $result = $modx->query("SELECT value, xtype FROM ". $modx->getOption('table_prefix') ."shopkeeper3_config WHERE setting = 'payments'");
+
+            if (is_object($result)) 
+            {
+                $row = $result->fetch(PDO::FETCH_ASSOC);
+
+                if(isset($row['xtype']) && $row['xtype'] == 'array')
+                {
+                    $payments = json_decode( $row['value'], true );
+                }
+
+                $is_Payqr = false;
+
+                foreach($payments as $payment)
+                {
+                    if($payment['label'] == 'PayQR')
                     {
-                        if($payment['label'] == 'PayQR')
-                        {
-                            $is_Payqr = true;
-                        }
+                        $is_Payqr = true;
                     }
-                    
-                    if(!$is_Payqr)
-                    {
-                        $payments[] = array('label' => 'PayQR', id => 101);
-                        //Производим обновление
-                        $modx->query("UPDATE " . $modx->getOption('table_prefix') ."shopkeeper3_config SET value = '" . json_encode($payments, JSON_UNESCAPED_UNICODE) . "' WHERE setting='payments'");
-                    }
+                }
+
+                if(!$is_Payqr)
+                {
+                    $payments[] = array('label' => 'PayQR', id => 101);
+                    //Производим обновление
+                    $modx->query("UPDATE " . $modx->getOption('table_prefix') ."shopkeeper3_config SET value = '" . json_encode($payments, JSON_UNESCAPED_UNICODE) . "' WHERE setting='payments'");
                 }
             }
             break;
@@ -188,11 +211,11 @@ if ($object->xpdo) {
         case xPDOTransport::ACTION_UNINSTALL:
             //$modx->log(modX::LOG_LEVEL_ERROR, 'Could not get classes from schema file.');
             
-//            $removed = $modx->exec('DROP TABLE IF EXISTS '.$modx->getOption('table_prefix').'payqr_items');
-//            
-//            if ($removed === false && $modx->errorCode() !== '' && $modx->errorCode() !== PDO::ERR_NONE) {
-//                print 'Could not drop table! ERROR: ' . print_r($modx->pdo->errorInfo(),true); 
-//            } 
+            $removed = $modx->exec('DROP TABLE IF EXISTS '.$modx->getOption('table_prefix').'payqr_items');
+            
+            if ($removed === false && $modx->errorCode() !== '' && $modx->errorCode() !== PDO::ERR_NONE) {
+                print 'Could not drop table! ERROR: ' . print_r($modx->pdo->errorInfo(),true); 
+            } 
             
             //удаляем таблицу-связку 
             $removed = $modx->exec('DROP TABLE IF EXISTS '.$modx->getOption('table_prefix').'order_invoice');
@@ -222,6 +245,24 @@ if ($object->xpdo) {
                 //Производим обновление
                 $modx->query("UPDATE " . $modx->getOption('table_prefix') ."shopkeeper3_config SET value = '" . json_encode($payments, JSON_UNESCAPED_UNICODE) . "' WHERE setting='payments'");
             }
+            
+            //удаляем директорию /rest
+            if(is_dir(MODX_BASE_PATH . 'rest'))
+            {
+                $dir = MODX_BASE_PATH . 'rest';
+                $objects = scandir(MODX_BASE_PATH . 'rest');
+                foreach ($objects as $object) 
+                { 
+                    if ($object != "." && $object != "..") 
+                    { 
+                        if (filetype($dir."/".$object) == "dir") rrmdir($dir."/".$object); else unlink($dir."/".$object); 
+                    } 
+                } 
+                reset($objects); 
+                
+                rmdir(MODX_BASE_PATH . 'rest');
+            }
+            
             return true;
     }
 }

@@ -38,7 +38,8 @@ $payqrConfig = payqr_config::init($config['merchant_id'], $config['secret_key_in
 if(isset($config['log_url']) && !empty($config['log_url']))
 {
     payqr_config::$enabledLog = true;
-    payqr_config::setLogFile($config['log_url']);
+    $log_file_name = pathinfo($config['log_url']);
+    payqr_config::setLogFile($log_file_name['basename']);
 }
 
 payqr_logs::addEnter();

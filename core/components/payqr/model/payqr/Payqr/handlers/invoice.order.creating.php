@@ -1,91 +1,59 @@
 <?php
-
-//Пользователя гость
-$user_id = null;
-
 $cData = $Payqr->objectOrder->getCustomer();
 $uData = json_decode($Payqr->objectOrder->getUserData());
 $uData = isset($uData[0])? $uData[0] : $uData;
 
 if(!isset($uData->user_id) && empty($uData->user_id)) 
 {
-	if(!isset($cData->email) && !isset($uData->email))
-	{
-		//фэйлим заказ клиента
-		//система не передала email клиента
-		return false;
-	}
-
-	//создаем пользователя в системе
-	$user_email = isset($cData->email)? $cData->email : $uData->email;
-
-        $user_id = null;
+    if(!isset($cData->email)) //, $uData->email
+    {
+        return false;
+    }
+    $user_id = null;
+    //пытаемся зарегистрировать пользователя
 }
 else
 {
-	//имеем клиента, от имени которого будем создавать заказ в системе
-	$user_id = $uData->user_id;
+    $user_id = $uData->user_id;
 }
 
-//Формируем информацию о покупателе
-$contacts = array();
-$FIO = "";
+//производим проверку на наличие inv_id
+$inv_id = $Payqr->objectOrder->getInvId();
 
-if(isset($cData->lastName) && !empty($cData->lastName))
+if(empty($inv_id))
 {
-    $FIO = $cData->lastName . " ";
+    payqr_logs::log("Не смогли получить invoice_id");
+    return false;
 }
 
-if(isset($cData->firstName) && !empty($cData->firstName))
-{
-    $FIO = $cData->firstName . " ";
-}
+payqr_logs::log("Нашли invoice_id:" . $inv_id);
 
-if(isset($cData->middlename) && !empty($cData->middlename))
-{
-    $FIO = $cData->middlename;
-}
-
-if(!empty($FIO))
-{ 
-    $contacts[] = array(
-        "name" => "fullname",
-        "value" => $FIO,
-        "label" => "Имя",
-    );
-}
-
-if(isset($cData->email) && !empty($cData->email))
-{
-    $contacts[] = array(
-        "name" => "email",
-        "value" => $cData->email,
-        "label" => "Адрес эл. почты",
-    );
-}
-
-if(isset($cData->phone) && !empty($cData->phone))
-{
-    $contacts[] = array(
-        "name" => "phone",
-        "value" => $cData->phone,
-        "label" => "Телефон",
-    );
-}
-
-$contacts[] = array(
-    "name" => "message",
-    "value" => "Заказ сделан через платежный сервис PayQR.",
-    "label" => "Комментарий",
-);
-
-//получаем статусы заказов
-$status_created = isset($config['payqr_status_creatted']) && !empty($config['payqr_status_creatted'])? $config['payqr_status_creatted'] : 0;
-
-//создаем заказ на основе актуализированным данных
+// производим проверку на наличие invoice
 $payqrOrder = new payqr_order($modx, $Payqr);
 
-$order_id = $payqrOrder->createShopkeeper3Order( $user_id, $contacts);
+$order_id = $payqrOrder->checkInvoice($inv_id);
+
+if(!empty($order_id))
+{
+    //заказ с заданнными параметрами уже создавался
+    //производим обновление состояния заказа
+    
+    if($payqrOrder->updateShopkeeper3Order($order_id))
+    {
+        payqr_logs::log("Успешно произведено обновление товаров");
+    }
+    else
+    {
+        payqr_logs::log("Не смогли произвести обновление товаров в заказе");
+    }
+}
+else
+{
+    //создаем заказ на основе актуализированным данных
+    $order_id = $payqrOrder->createShopkeeper3Order( $user_id );
+    
+    $payqrOrder->setInvoice($order_id, $inv_id);
+}
 
 //Получаем стоимость товара с доставкой
 $amount = $payqrOrder->getTotal(true);
@@ -93,35 +61,31 @@ $amount = $payqrOrder->getTotal(true);
 if(empty($amount))
 {
     payqr_logs::log('Не смогли получить amount у заказа!');
-    //не смогли посчитать сумму заказа
     return false;
 }
-payqr_logs::log('Итоговая стоимость amount у заказа : ' . $amount);
 
+payqr_logs::log('Итоговая стоимость amount у заказа : ' . $amount);
 $Payqr->objectOrder->setAmount($amount);
 
 if(!$order_id)
 {
     payqr_logs::log('Не смогли получить orderId у заказа!');
-    //фэйлим заказ клиента
-    //не получилось создать заказ
     return false;
 }
 
-payqr_logs::log('Получили orderId у заказа: ' . $order_id);
-
+payqr_logs::log('Устанавливаем orderId: ' . $order_id);
 $Payqr->objectOrder->setOrderId($order_id);
 
 //Корзину необходимо очищать 
-
 $userdata = array(
+    "cart_id" => (isset($config['cart_id'])? (int) $config['cart_id'] : null),
     "user_id" => $user_id,
     "session_id" => "session"/*$uData->session_id*/,
     "order_id" => $order_id,
     "amount" => $amount,
-    "message" => (isset($config['payqr_user_message_text'])? $config['payqr_user_message_text'] : ""),
-    "messageImageURL" => (isset($config['payqr_user_message_imageurl'])? $config['payqr_user_message_imageurl'] : ""),
-    "messageURL" => (isset($config['payqr_user_message_url'])? $config['payqr_user_message_url'] : "")
+    "message" => (isset($config['user_message_text'])? $config['user_message_text'] : ""),
+    "messageImageURL" => (isset($config['user_message_imageurl'])? $config['user_message_imageurl'] : ""),
+    "messageURL" => (isset($config['user_message_url'])? $config['user_message_url'] : "")
 );
 
 $Payqr->objectOrder->setUserData(json_encode($userdata));
